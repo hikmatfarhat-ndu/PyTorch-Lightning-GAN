@@ -1,0 +1,4 @@
+data/*
+GAN/lightning_logs/*
+img_align*
+GAN/MNIST

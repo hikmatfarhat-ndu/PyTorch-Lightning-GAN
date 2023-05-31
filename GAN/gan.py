@@ -86,6 +86,7 @@ class GAN(pl.LightningModule):
     
     # Sample noise
     # z = torch.randn(x.shape, device=device)
+    # generate x.shape[0](i.e.,batch size) tensors of shape [1,100]
     z = torch.randn(x.shape[0], 1, 100, device=device)
 
     # Generate images
@@ -115,6 +116,7 @@ class GAN(pl.LightningModule):
     loss_real = nn.BCELoss()(d_output, torch.ones(x.shape[0], device=device))
 
     # Fake images
+    # generate x.shape[0](i.e.,batch size) tensors of shape [1,100]
     z = torch.randn(x.shape[0], 1, 100, device=device)
     generated_imgs = self(z)
     d_output = torch.squeeze(self.discriminator(generated_imgs))
@@ -151,12 +153,14 @@ if __name__ == "__main__":
 
   data = torchvision.datasets.MNIST(root='../data/MNIST', download=True,
                                     transform=transforms.Compose([transforms.ToTensor(),
-                                      transforms.Normalize(mean=[0.5], std=[0.5]),
-                                      transforms.Lambda(lambda x: x.view(-1, 784))]))
+                                      transforms.Normalize(mean=[0.5], std=[0.5])
+                                     ,transforms.Lambda(lambda x: x.view(-1, 784))
+                                                        ]))
 
   mnist_dataloader = DataLoader(data, batch_size=128, shuffle=True, num_workers=0)
 
   model = GAN()
 
-  trainer = pl.Trainer(max_epochs=100, gpus=1 if torch.cuda.is_available() else 0, progress_bar_refresh_rate=50)
+  trainer = pl.Trainer(max_epochs=100, gpus=1 if torch.cuda.is_available() else 0)
+  #trainer = pl.Trainer(max_epochs=100, gpus=1 if torch.cuda.is_available() else 0, progress_bar_refresh_rate=50)
   trainer.fit(model, mnist_dataloader)
