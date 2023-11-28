@@ -2,3 +2,6 @@ data/*
 GAN/lightning_logs/*
 img_align*
 GAN/MNIST
+logs*
+mnist*
+*samples*
